@@ -90,8 +90,9 @@ inputs = {
   db_master_username = "admin"
   db_master_password = "password"
 
-  task_cpu    = 1024
-  task_memory = 2048
+  task_cpu           = 1024
+  task_memory        = 2048
+  task_desired_count = 3
 
   log_retention_in_days = 30
 

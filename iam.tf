@@ -9,7 +9,9 @@ data "aws_iam_policy_document" "ecs_task_execution_policy" {
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
       "logs:CreateLogStream",
-      "logs:PutLogEvents"
+      "logs:PutLogEvents",
+      "ssm:GetParameters",
+      "kms:Decrypt"
     ]
     resources = ["*"]
   }

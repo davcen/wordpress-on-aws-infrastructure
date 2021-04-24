@@ -18,9 +18,10 @@ module "wp_db" {
   db_parameter_group_name         = aws_db_parameter_group.aurora_mysql.id
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_mysql.id
 
-  database_name = "wordpress"
-
+  database_name          = "wordpress"
   create_random_password = false
+  username               = var.db_master_username
+  password               = var.db_master_password
 
   apply_immediately   = true
   skip_final_snapshot = true
@@ -28,7 +29,7 @@ module "wp_db" {
   scaling_configuration = {
     auto_pause               = true
     min_capacity             = 1
-    max_capacity             = 5
+    max_capacity             = 16
     seconds_until_auto_pause = 300
     timeout_action           = "ForceApplyCapacityChange"
   }

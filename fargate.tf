@@ -36,6 +36,8 @@ resource "aws_ecs_service" "wp" {
 
   task_definition = aws_ecs_task_definition.wordpress.arn
 
+  desired_count = var.task_desired_count
+
   network_configuration {
     security_groups = [
       module.efs_sg.this_security_group_id,
@@ -50,13 +52,15 @@ resource "aws_ecs_service" "wp" {
     container_port   = var.container_port
   }
 
-  deployment_controller {
-    type = "CODE_DEPLOY"
-  }
+  # deployment_controller {
+  #   type = "CODE_DEPLOY"
+  # }
 
-  lifecycle {
-    ignore_changes = [desired_count]
-  }
+  tags = var.common_tags
+
+  # lifecycle {
+  #   ignore_changes = [desired_count]
+  # }
 }
 
 resource "aws_ecs_task_definition" "wordpress" {

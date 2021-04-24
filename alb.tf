@@ -36,9 +36,15 @@ module "alb" {
 
   target_groups = [
     {
-      name             = "${var.name_prefix}-default-http"
+      name             = "${var.name_prefix}-ecs-svc"
       backend_protocol = "HTTP"
       backend_port     = var.container_port
+      target_type      = "ip"
+      health_check = {
+        enabled = true
+        path    = "/"
+        matcher = "200,302"
+      }
     }
   ]
 

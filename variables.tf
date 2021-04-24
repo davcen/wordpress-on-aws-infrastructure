@@ -31,8 +31,8 @@ variable "db_master_password" {
 }
 
 variable "task_cpu" {}
-
 variable "task_memory" {}
+variable "task_desired_count" {}
 
 variable "log_retention_in_days" {}
 

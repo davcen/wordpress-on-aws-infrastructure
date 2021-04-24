@@ -1,0 +1,46 @@
+[
+  {
+    "secrets": [
+      {
+        "name": "WORDPRESS_DB_USER",
+        "valueFROM": "${db_user}"
+      },
+      {
+        "name": "WORDPRESS_DB_PASSWORD",
+        "valueFROM": "${db_password}"
+      }
+    ],
+    "environment": [
+      {
+        "name": "WORDPRESS_DB_HOST",
+        "value": "${db_host}"
+      },
+      {
+        "name": "WORDPRESS_DB_NAME",
+        "value": "wordpress"
+      }
+    ],
+    "essential": true,
+    "image": "wordpress",
+    "name": "${container_name}",
+    "portMappings": [
+      {
+        "containerPort": "${container_port}"
+      }
+    ],
+    "mountPoints": [
+      {
+        "containerPath": "/var/www/html",
+        "sourceVolume": "efs"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver":"awslogs",
+      "options": {
+        "awslogs-group": "${log_group}",
+        "awslogs-region": "${region}",
+        "awslogs-stream-prefix": "app"
+      }
+    }
+  }
+]

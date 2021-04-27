@@ -36,7 +36,19 @@ module "alb" {
 
   target_groups = [
     {
-      name             = "${var.name_prefix}-ecs-svc"
+      name             = "${var.name_prefix}-ecs-svc-blue"
+      backend_protocol = "HTTP"
+      backend_port     = var.container_port
+      target_type      = "ip"
+      health_check = {
+        enabled = true
+        path    = "/"
+        matcher = "200,302"
+      }
+    },
+    // I use a second TG for blue/green deploymeny through CodeDeploy
+    {
+      name             = "${var.name_prefix}-ecs-svc-green"
       backend_protocol = "HTTP"
       backend_port     = var.container_port
       target_type      = "ip"

@@ -47,20 +47,46 @@ resource "aws_ecs_service" "wp" {
   }
 
   load_balancer {
-    target_group_arn = module.alb.target_group_arns[0]
+    target_group_arn = module.alb.target_group_arns[0] // register to "blue" target by default
     container_name   = var.container_name
     container_port   = var.container_port
   }
 
-  # deployment_controller {
-  #   type = "CODE_DEPLOY"
-  # }
+  deployment_controller {
+    type = "CODE_DEPLOY"
+  }
 
   tags = var.common_tags
 
-  # lifecycle {
-  #   ignore_changes = [desired_count]
-  # }
+  lifecycle {
+    ignore_changes = [desired_count]
+  }
+}
+
+resource "aws_appautoscaling_target" "wp-service" {
+  min_capacity       = var.ecs_service_autoscaling_min_capacity
+  max_capacity       = var.ecs_service_autoscaling_max_capacity
+  resource_id        = "service/${aws_ecs_cluster.wp.name}/${aws_ecs_service.wp.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
+
+resource "aws_appautoscaling_policy" "wp-service" {
+  name               = "${var.name_prefix}.fargate-service-autoscaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.wp-service.id
+  scalable_dimension = aws_appautoscaling_target.wp-service.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.wp-service.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    target_value       = var.ecs_service_autoscaling_target
+    scale_in_cooldown  = var.ecs_service_autoscaling_scale_in_cooldown
+    scale_out_cooldown = var.ecs_service_autoscaling_scale_out_cooldown
+
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+  }
 }
 
 resource "aws_ecs_task_definition" "wordpress" {
@@ -75,13 +101,14 @@ resource "aws_ecs_task_definition" "wordpress" {
   container_definitions = templatefile(
     "wordpress_container_definition.json",
     {
-      db_user        = aws_ssm_parameter.db_master_user.arn,
-      db_password    = aws_ssm_parameter.db_master_password.arn,
-      db_host        = module.wp_db.this_rds_cluster_endpoint,
-      container_name = var.container_name,
-      container_port = var.container_port,
-      log_group      = aws_cloudwatch_log_group.wordpress.name,
-      region         = data.aws_region.current.name
+      db_user         = aws_ssm_parameter.db_master_user.arn,
+      db_password     = aws_ssm_parameter.db_master_password.arn,
+      db_host         = module.wp_db.this_rds_cluster_endpoint,
+      container_image = var.container_image_url,
+      container_name  = var.container_name,
+      container_port  = var.container_port,
+      log_group       = aws_cloudwatch_log_group.wordpress.name,
+      region          = data.aws_region.current.name
     }
   )
 

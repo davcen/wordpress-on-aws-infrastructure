@@ -28,10 +28,10 @@ module "wp_db" {
 
   scaling_configuration = {
     auto_pause               = true
-    min_capacity             = 1
-    max_capacity             = 16
-    seconds_until_auto_pause = 300
-    timeout_action           = "ForceApplyCapacityChange"
+    min_capacity             = var.db_min_capacity
+    max_capacity             = var.db_max_capacity
+    seconds_until_auto_pause = var.db_autopause_after_seconds
+    timeout_action           = "RollbackCapacityChange"
   }
 
   create_monitoring_role = false

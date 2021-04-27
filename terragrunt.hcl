@@ -87,15 +87,26 @@ inputs = {
     "10.0.68.0/23"
   ]
 
-  db_master_username = "admin"
-  db_master_password = "password"
+  db_min_capacity            = 1
+  db_max_capacity            = 1
+  db_autopause_after_seconds = 3600
 
   task_cpu           = 1024
   task_memory        = 2048
-  task_desired_count = 3
+  task_desired_count = 1
 
   log_retention_in_days = 30
 
-  container_name = "wordpress"
-  container_port = 80
+  container_image_url = "wordpress:5.7.0-php7.3-apache"
+  container_name      = "wordpress"
+  container_port      = 80
+
+  ecs_service_autoscaling_min_capacity       = 1
+  ecs_service_autoscaling_max_capacity       = 30
+  ecs_service_autoscaling_target             = 75
+  ecs_service_autoscaling_scale_in_cooldown  = 300
+  ecs_service_autoscaling_scale_out_cooldown = 300
+
+  github_application_repository_url = "https://github.com/davcen/wordpress-on-aws-application.git"
+  github_access_token               = "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"
 }

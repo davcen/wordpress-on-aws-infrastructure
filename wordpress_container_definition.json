@@ -21,7 +21,7 @@
       }
     ],
     "essential": true,
-    "image": "wordpress",
+    "image": "${container_image}",
     "name": "${container_name}",
     "portMappings": [
       {

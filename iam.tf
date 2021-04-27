@@ -83,3 +83,61 @@ module "ecs_task_role" {
 
   number_of_custom_role_policy_arns = 1
 }
+
+
+# Rif. https://docs.aws.amazon.com/codebuild/latest/userguide/setting-up.html#setting-up-service-role
+
+data "aws_iam_policy_document" "codebuild_service_role_policy" {
+  statement {
+    sid = "CloudWatchLogsPolicy"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "ECRRWPolicy"
+    actions = [
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchGetImage",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:InitiateLayerUpload",
+      "ecr:UploadLayerPart",
+      "ecr:CompleteLayerUpload",
+      "ecr:PutImage"
+    ]
+    resources = ["*"]
+  }
+}
+
+module "codebuild_servicerole_policy" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
+  version = "3.16.0"
+
+  name        = "${var.name_prefix}-codebuild-servicerole"
+  description = "AWS CodeBuild Service Role Policy"
+  policy      = data.aws_iam_policy_document.codebuild_service_role_policy.json
+}
+
+module "codebuild_servicerole" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
+  version = "3.16.0"
+
+  role_name         = "${var.name_prefix}-codebuild-servicerole"
+  create_role       = true
+  role_requires_mfa = false
+
+  trusted_role_services = [
+    "codebuild.amazonaws.com"
+  ]
+
+  custom_role_policy_arns = [
+    module.codebuild_servicerole_policy.arn
+  ]
+
+  number_of_custom_role_policy_arns = 1
+}

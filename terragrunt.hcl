@@ -1,4 +1,5 @@
 locals {
+  account_id   = get_aws_account_id()
   project_name = "wp-on-aws"
   region       = "eu-west-1"
   environment  = "dev"
@@ -16,7 +17,7 @@ locals {
 remote_state {
   backend = "s3"
   config = {
-    bucket         = "${local.name_prefix}-terraform-state"
+    bucket         = "${local.name_prefix}-${local.region}-${local.account_id}-terraform-state"
     key            = "${path_relative_to_include()}/terraform.tfstate"
     region         = local.region
     encrypt        = true
@@ -88,12 +89,13 @@ inputs = {
   ]
 
   db_min_capacity            = 1
-  db_max_capacity            = 1
+  db_max_capacity            = 4
+  db_autopause               = false
   db_autopause_after_seconds = 3600
 
   task_cpu           = 1024
   task_memory        = 2048
-  task_desired_count = 1
+  task_desired_count = 3
 
   log_retention_in_days = 30
 
@@ -101,9 +103,9 @@ inputs = {
   container_name      = "wordpress"
   container_port      = 80
 
-  ecs_service_autoscaling_min_capacity       = 1
-  ecs_service_autoscaling_max_capacity       = 30
-  ecs_service_autoscaling_target             = 75
-  ecs_service_autoscaling_scale_in_cooldown  = 300
-  ecs_service_autoscaling_scale_out_cooldown = 300
+  ecs_service_autoscaling_min_capacity                   = 1
+  ecs_service_autoscaling_max_capacity                   = 30
+  ecs_service_autoscaling_cpu_average_utilization_target = 75
+  ecs_service_autoscaling_scale_in_cooldown              = 300
+  ecs_service_autoscaling_scale_out_cooldown             = 300
 }

@@ -75,7 +75,7 @@ resource "aws_appautoscaling_policy" "wp-service" {
   service_namespace  = aws_appautoscaling_target.wp-service.service_namespace
 
   target_tracking_scaling_policy_configuration {
-    target_value       = var.ecs_service_autoscaling_target
+    target_value       = var.ecs_service_autoscaling_cpu_average_utilization_target
     scale_in_cooldown  = var.ecs_service_autoscaling_scale_in_cooldown
     scale_out_cooldown = var.ecs_service_autoscaling_scale_out_cooldown
 

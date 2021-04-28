@@ -27,7 +27,7 @@ module "wp_db" {
   skip_final_snapshot = true
 
   scaling_configuration = {
-    auto_pause               = true
+    auto_pause               = var.db_autopause
     min_capacity             = var.db_min_capacity
     max_capacity             = var.db_max_capacity
     seconds_until_auto_pause = var.db_autopause_after_seconds

@@ -34,6 +34,7 @@ variable "db_master_password" {
 
 variable "db_min_capacity" {}
 variable "db_max_capacity" {}
+variable "db_autopause" {}
 variable "db_autopause_after_seconds" {}
 
 variable "task_cpu" {}
@@ -48,6 +49,6 @@ variable "container_port" {}
 
 variable "ecs_service_autoscaling_min_capacity" {}
 variable "ecs_service_autoscaling_max_capacity" {}
-variable "ecs_service_autoscaling_target" {}
+variable "ecs_service_autoscaling_cpu_average_utilization_target" {}
 variable "ecs_service_autoscaling_scale_in_cooldown" {}
 variable "ecs_service_autoscaling_scale_out_cooldown" {}

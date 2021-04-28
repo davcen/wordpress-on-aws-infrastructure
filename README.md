@@ -2,7 +2,7 @@
 
 POC deployment of a Wordpress site on AWS, using a "serverless" approach for the underlying infrastructure
 
-![wordpress-on-aws-infrastructure](images/wordpress_on_aws-architecture.svg)
+![wordpress-on-aws-infrastructure](images/wordpress_on_aws-architecture.png)
 
 ---
 

@@ -8,10 +8,10 @@ POC deployment of a Wordpress site on AWS, using a "serverless" approach for the
 
 The following architecture tries to accomplish the following requirements:
 
-- highly reliable
-- can scale horizontally
-- can be deployed automatically
-- entirely hosted on AWS
+- it must be highly reliable
+- it can scale horizontally
+- it can be deployed automatically
+- it is entirely hosted on AWS
 
 ## Components
 
@@ -32,7 +32,7 @@ I've used the below AWS services to carry out this task:
 
 - **Application Elastic Load Balancer (ALB)**
 
-  *The public interface to expose externallt the site*
+  *The public interface to expose the site to public Internet*
 
 - **Elastic Container Service (ECS)** (using Fargate launch type)
 
@@ -52,9 +52,9 @@ I've used the below AWS services to carry out this task:
 
 ### Deployment method
 
-I've chosen [***Terraform***](https://www.terraform.io/) to deploy this infrastructure using the IaC philosophy, because it's quite simple to learn and use, his language is clear and relatively easy for humans to read and write. I've also used [***Terragrunt***](https://terragrunt.gruntwork.io/) as wrapper because it add several extra tools, like automatic remote state management.
+I've chosen [***Terraform***](https://www.terraform.io/) to deploy this infrastructure using the IaC philosophy, because it's quite simple to learn and use, its language is clear and quite easy for humans to read and write. I've also used [***Terragrunt***](https://terragrunt.gruntwork.io/) as wrapper because it adds several extra tools, like automatic remote state management.
 
-Terragrunt configure and create all the necessary resources (S3 bucket and DynamoDB tables) to use a [remote state](https://www.terraform.io/docs/language/state/remote.html) for Terraform.
+Terragrunt configures and creates all the necessary resources (S3 bucket and DynamoDB tables) to use a [remote state](https://www.terraform.io/docs/language/state/remote.html) for Terraform.
 
 I've used several battle-tested [Terraform modules](https://registry.terraform.io/browse/modules?provider=aws) to optimize the amount of code needed to provision the infrastructure.
 
@@ -63,10 +63,10 @@ I've used several battle-tested [Terraform modules](https://registry.terraform.i
 - All services are almost fully managed by AWS, so the effort to setup and maintain the resources that run my application is low
 - I've used a 3-tier network (Public -> Private -> Database) using all the 3 availability zones, to maximize the reliability of the infrastructure
 - **Elastic Container Service (ECS)** using Fargate:
-  - i've chosen to deploy a Wordpress site using containers because they are simpler to manage and upgrade than a classic installation hosted on an full OS.
-  - ECS with Fargate launch type permits to run containers in a "serverless" mode, without the burden of managing the cluster of hosts
-  - I've configured an Auto Scaling Policy for ECS Service using a [Target Tracking Scaling Policy](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-autoscaling-targettracking.html) based on average CPU utilization.
-- **Application Elastic Load Balancer**: it distributes the incoming traffic across multiple targets and availability zones. It can automatically scale to the vast majority of workloads.
+  - i've chosen to deploy a Wordpress site using containers because it is simpler to manage and upgrade than a classic installation hosted on an full OS
+  - ECS with Fargate launch type permits to run containers in a "serverless" mode, without the burden of managing a cluster of EC2 hosts
+  - I've configured an Auto Scaling Policy for ECS Service using a [Target Tracking Scaling Policy](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-autoscaling-targettracking.html) based on average CPU utilization
+- **Application Elastic Load Balancer**: it distributes the incoming traffic across multiple targets and availability zones
 - **Elastic File System (EFS)**: it provides a persistent storage for stateless Wordpress containers, using an highly scalable and managed NFS service which can grow and shrink automatically
 - **Amazon Aurora (Serverless)**: is the serverless version of Aurora, a fully managed relational database engine that's compatible with MySQL and PostgreSQL, where scaling and failover are not developer responsibilities and are managed by AWS
 - **Cloudwatch**: it monitors all AWS resources in real time, collecting and tracking metrics. It can also collect application and service logs, and use alarms for notifications and enable automatic action based on them (eg. Autoscaling)
@@ -89,7 +89,7 @@ I've used several battle-tested [Terraform modules](https://registry.terraform.i
 
 ### Configure AWS profile
 
-[Configure a profile for AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html), it will be used by Terraform to authenticate with your AWS account and interact with it to provision the required resources. Export the profile in an environment variable so [Terraform can use it without further steps](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#environment-variables).
+[Configure a profile for AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html), it will be used by Terraform to authenticate with your AWS account and interact with it to provision the required resources. Export the profile in a proper environment variable so [Terraform can use it without further steps](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#environment-variables).
 
 For example:
 ```
@@ -138,7 +138,7 @@ There are also input parameters not hardcoded in this file for security best pra
 |db_master_username|The username of admin user of Aurora database|
 |db_master_password|The password of admin user of Aurora database|
 
-Enter them manually after every run of Terraform/Terragrunt, or pass them using a local **\<arbitrary_name\>.auto.tfvars** with this contents
+Enter them manually during every run of Terraform/Terragrunt, or pass them to Terraform using a local **\<arbitrary_name\>.auto.tfvars** with this contents
 
 Example:
 
@@ -151,8 +151,6 @@ db_master_password = "password"
 ### Initialize environment
 
 Run `terragrunt init --terragrunt-non-interactive` from the root dir of this repository
-
-During the first run
 
 Example of output:
 ```
@@ -256,7 +254,7 @@ Terraform will perform the following actions:
         }
     }
 
-[ output trunked ]
+[ truncated output ]
 
 Plan: 72 to add, 0 to change, 0 to destroy.
 
@@ -280,7 +278,7 @@ Example of output:
 ```
 $ terragrunt apply
 
-[trunked output]
+[truncated output]
 
 Plan: 72 to add, 0 to change, 0 to destroy.
 
@@ -324,7 +322,7 @@ http://dev-wp-on-aws-public-alb-1923875277.eu-west-1.elb.amazonaws.com
 ```
 $ terragrunt destroy
 
-[trunked output]
+[truncated output]
 
 Plan: 0 to add, 0 to change, 72 to destroy.
 
@@ -334,7 +332,7 @@ Do you want to perform these actions?
 
   Enter a value: yes
 
-[trunked output]
+[truncated output]
 
 Apply complete! Resources: 0 added, 0 changed, 72 destroyed.
 ```

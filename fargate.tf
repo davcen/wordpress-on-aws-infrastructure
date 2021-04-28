@@ -52,10 +52,6 @@ resource "aws_ecs_service" "wp" {
     container_port   = var.container_port
   }
 
-  deployment_controller {
-    type = "CODE_DEPLOY"
-  }
-
   tags = var.common_tags
 
   lifecycle {

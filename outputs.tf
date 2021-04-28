@@ -12,8 +12,3 @@ output "wordpress_ecs_task_definition_arn" {
   description = "The ARN of ECS task definition"
   value       = aws_ecs_task_definition.wordpress.arn
 }
-
-output "wordpress_ecr_repository_url" {
-  description = "The URL of ECR repository for custom Wordpress docker image"
-  value       = aws_ecr_repository.wordpress.repository_url
-}

@@ -106,7 +106,4 @@ inputs = {
   ecs_service_autoscaling_target             = 75
   ecs_service_autoscaling_scale_in_cooldown  = 300
   ecs_service_autoscaling_scale_out_cooldown = 300
-
-  github_application_repository_url = "https://github.com/davcen/wordpress-on-aws-application.git"
-  github_access_token               = "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"
 }

@@ -51,8 +51,3 @@ variable "ecs_service_autoscaling_max_capacity" {}
 variable "ecs_service_autoscaling_target" {}
 variable "ecs_service_autoscaling_scale_in_cooldown" {}
 variable "ecs_service_autoscaling_scale_out_cooldown" {}
-
-variable "github_application_repository_url" {}
-variable "github_access_token" {
-  sensitive = true
-}
